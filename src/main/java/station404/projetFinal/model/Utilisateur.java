@@ -1,9 +1,16 @@
 package station404.projetFinal.model;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "utilisateur")
-public class Utilisateur {
+public class Utilisateur implements UserDetails{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utilisateur", nullable = false)
@@ -45,4 +52,22 @@ public class Utilisateur {
     public ProfilUtilisateur getProfilUtilisateur() {
         return profilUtilisateur;
     }
+
+
+    @Override
+    public String getUsername(){
+        return login;
+    }
+
+    @Override
+    public String getPassword(){
+        return motDePasse;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + profilUtilisateur.name()));
+    }
+
+
 }
