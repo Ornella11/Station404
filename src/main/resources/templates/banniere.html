@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="banniere" class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
+        <a th:href="@{/}" class="flex items-center gap-2">
+            <img th:src="@{/images/logo_Station404.png}" alt="Logo Station404" class="h-8">
+            <span class="text-lg font-bold text-slate-800">Station404</span>
+        </a>
+
+        <div th:if="${utilisateurConnecte != null}" class="flex items-center gap-3 text-sm text-slate-700">
+            <span th:text="|Bonjour ${utilisateurConnecte.prenom} (${utilisateurConnecte.profilUtilisateur})|">
+                Bonjour Prénom (PROFIL)
+            </span>
+            <span class="text-slate-300">|</span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="text-blue-600 hover:underline">Déconnectez-vous</button>
+            </form>
+        </div>
+
+    </div>
+</header>
+
+</body>
+</html>
