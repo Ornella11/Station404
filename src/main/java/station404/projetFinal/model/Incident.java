@@ -20,7 +20,7 @@ public class Incident {
     private String description;
 
     @Column(name = "date_ouverture", nullable = false)
-    public static LocalDateTime dateOuverture = LocalDateTime.now();
+    public LocalDateTime dateOuverture = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
@@ -98,6 +98,25 @@ public class Incident {
         this.prestataire = prestataire;
     }
 
+    public EtatIncident getEtat() {
+        return EtatIncident.de(statutIncident, dateOuverture);
+    }
+
+    public boolean isResolu(){
+        return statutIncident == StatutIncident.RESOLU;
+    }
+
+    public boolean isNonAffecte(){
+        return statutIncident == StatutIncident.NON_AFFECTE;
+    }
+
+    public boolean isAffectable(){
+        return !isResolu();
+    }
+
+    public boolean isResolvable(){
+        return !isResolu();
+    }
 
 }
 

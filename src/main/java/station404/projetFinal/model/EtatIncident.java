@@ -13,7 +13,7 @@ public enum EtatIncident {
         if (statut == StatutIncident.RESOLU)  return RESOLU;
         if (statut == StatutIncident.AFFECTE) return AFFECTE;
 
-        long duree = Duration.between(Incident.dateOuverture, LocalDateTime.now()).toHours();
+        long duree = Duration.between(dateOuverture, LocalDateTime.now()).toHours();
         if (duree >= 72) return ROUGE;
         if (duree >= 48) return ORANGE;
         return VERT;
