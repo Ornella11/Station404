@@ -20,11 +20,11 @@ public class Incident {
     private String description;
 
     @Column(name = "date_ouverture", nullable = false)
-    private LocalDateTime dateOuverture;
+    public static LocalDateTime dateOuverture = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
-    private StatutIncident statutIncident ;
+    public StatutIncident statutIncident = StatutIncident.NON_AFFECTE; ;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prestataire")
@@ -40,7 +40,7 @@ public class Incident {
         this.statutIncident = StatutIncident.NON_AFFECTE;
     }
 
-    protected Incident(){
+    public Incident(){
     }
 
     public Integer getId() {
@@ -69,5 +69,35 @@ public class Incident {
     public LocalDateTime getDateResolution() {
         return dateResolution;
     }
+
+    public void setEquipement(Equipement equipement) {
+        this.equipement = equipement;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setStatutIncident(StatutIncident statutIncident) {
+        this.statutIncident = statutIncident;
+    }
+
+    public void setDateOuverture(LocalDateTime dateOuverture) {
+        this.dateOuverture = dateOuverture;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDateResolution(LocalDateTime dateResolution) {
+        this.dateResolution = dateResolution;
+    }
+
+    public void setPrestataire(Prestataire prestataire) {
+        this.prestataire = prestataire;
+    }
+
+
 }
 
