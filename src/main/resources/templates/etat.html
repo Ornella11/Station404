@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<span th:fragment="etatEquipement(etat)" th:switch="${etat.name()}">
+    <span th:case="'EN_SERVICE'" class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">En service</span>
+    <span th:case="'EN_PANNE'" class="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">En panne</span>
+    <span th:case="'EN_MAINTENANCE'" class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">En maintenance</span>
+    <span th:case="*" class="rounded-full bg-slate-200 px-2 py-1 text-xs font-medium text-slate-700">Hors service</span>
+</span>
+
+</body>
+</html>
