@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|Station404 – ${equipement.reference}|">Équipement</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<header th:replace="~{banniere :: banniere}"></header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+
+    <a th:href="@{/stations/{id}(id=${equipement.station.id})}"
+       class="text-sm text-blue-600 hover:underline"
+       th:text="|← ${equipement.station.nom}|">← Station</a>
+
+    <div class="mt-2 mb-6 flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl font-bold text-slate-800" th:text="${equipement.libelle}">Libellé</h1>
+        <span th:replace="~{etat:: etatEquipement(${equipement.etatEquipement})}"></span>
+    </div>
+
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">Informations</h2>
+        <dl class="grid gap-4 sm:grid-cols-2 text-sm">
+            <div>
+                <dt class="text-slate-500">Référence</dt>
+                <dd class="font-mono text-slate-800" th:text="${equipement.reference}">REF-001</dd>
+            </div>
+            <div>
+                <dt class="text-slate-500">Type</dt>
+                <dd class="text-slate-800" th:text="${equipement.typeEquipement}">TYPE</dd>
+            </div>
+            <div>
+                <dt class="text-slate-500">Station</dt>
+                <dd class="text-slate-800" th:text="${equipement.station.nom}">Station</dd>
+            </div>
+            <div>
+                <dt class="text-slate-500">État de fonctionnement</dt>
+                <dd><span th:replace="~{etat:: etatEquipement(${equipement.etatEquipement})}"></span></dd>
+            </div>
+        </dl>
+    </section>
+
+</main>
+
+</body>
+</html>

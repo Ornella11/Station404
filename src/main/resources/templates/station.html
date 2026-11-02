@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|Station404 – ${station.nom}|">Station</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<header th:replace="~{banniere :: banniere}"></header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+
+    <a th:href="@{/stations}" class="text-sm text-blue-600 hover:underline">← Toutes les stations</a>
+
+    <h1 class="text-2xl font-bold text-slate-800 mt-2 mb-6" th:text="${station.nom}">Nom de la station</h1>
+
+    <p th:if="${#lists.isEmpty(equipements)}" class="text-slate-500">Aucun équipement dans cette station.</p>
+
+    <div th:unless="${#lists.isEmpty(equipements)}" class="overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-left text-slate-600">
+            <tr>
+                <th class="px-4 py-3">Référence</th>
+                <th class="px-4 py-3">Libellé</th>
+                <th class="px-4 py-3">Type</th>
+                <th class="px-4 py-3">État</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="equipement : ${equipements}" class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono">
+                    <a th:href="@{/equipements/{id}(id=${equipement.id})}"
+                       class="text-blue-600 hover:underline"
+                       th:text="${equipement.reference}">REF-001</a>
+                </td>
+                <td class="px-4 py-3" th:text="${equipement.libelle}">Libellé</td>
+                <td class="px-4 py-3" th:text="${equipement.typeEquipement}">TYPE</td>
+                <td class="px-4 py-3">
+                    <span th:replace="~{etat :: etatEquipement(${equipement.etatEquipement})}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+</body>
+</html>

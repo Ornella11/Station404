@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stations</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<header th:replace="~{banniere :: banniere}"></header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">Stations du réseau</h1>
+
+    <p th:if="${#lists.isEmpty(stations)}" class="text-slate-500">Aucune station enregistrée.</p>
+
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <li th:each="station : ${stations}">
+            <a th:href="@{/stations/{id}(id=${station.id})}"
+               class="block rounded-xl bg-white p-5 shadow-sm border border-slate-200
+                      hover:border-blue-400 hover:shadow-md transition">
+                <span class="text-lg font-semibold text-slate-800" th:text="${station.nom}">Nom de la station</span>
+                <span class="block text-sm text-blue-600 mt-1">Voir les équipements →</span>
+            </a>
+        </li>
+    </ul>
+</main>
+
+</body>
+</html>
