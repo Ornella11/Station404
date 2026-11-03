@@ -114,9 +114,6 @@ public class Incident {
         return !isResolu();
     }
 
-    public boolean isResolvable(){
-        return !isResolu();
-    }
 
 }
 

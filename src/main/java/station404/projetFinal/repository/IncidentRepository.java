@@ -21,4 +21,6 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
     List<Incident> trouverIncidentsActifs();
 
     List<Incident> findByStatutIncidentOrderByDateResolutionDesc(StatutIncident statutIncident);
+
+    List<Incident> findByStatutIncidentNot(StatutIncident statutIncident);
 }

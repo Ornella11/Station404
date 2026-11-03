@@ -5,11 +5,12 @@
     <title>Incidents actifs - Station404</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="min-h-screen bg-slate-100 text-slate-800">
 
 <header th:replace="~{banniere :: banniere}"></header>
 
-<main class="max-w-7xl mx-auto px-4 py-8">
+<main class="max-w-7xl mx-auto px-4 py-8"
+
     <form th:action="@{/incidents/nouveau}">
         <div class="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
             <p class="mt-1 text-sm text-slate-500">Si un équipement dysfonctionne, déclarez l'incident pour lancer sa prise en charge.</p>
