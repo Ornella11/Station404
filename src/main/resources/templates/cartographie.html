@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cartographie du réseau</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+<header th:replace="~{banniere :: banniere}"></header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-slate-800 mb-2">Cartographie du réseau</h1>
+    <p class="text-sm text-slate-500 mb-4">Cliquez sur une station pour voir sa situation et accéder à ses équipements.</p>
+
+    <div id="carte" class="h-[70vh] rounded-xl shadow-sm border border-slate-200"></div>
+
+    <ul class="flex flex-wrap gap-4 mt-4 text-sm text-slate-700">
+        <li class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-green-600"></span>Aucun incident actif</li>
+        <li class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-amber-500"></span>1 à 2 incidents actifs</li>
+        <li class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-red-600"></span>3 incidents actifs ou plus</li>
+    </ul>
+
+    <ul id="donnees-stations" hidden>
+        <li th:each="etat : ${etatsStations}"
+            th:data-nom="${etat.nom()}"
+            th:data-latitude="${etat.latitude()}"
+            th:data-longitude="${etat.longitude()}"
+            th:data-incidents="${etat.nbIncidentsActifs()}"
+            th:data-url="@{/stations/{id}(id=${etat.id()})}"></li>
+    </ul>
+</main>
+
+<script>
+    const SEUIL_ORANGE = 1;
+    const SEUIL_ROUGE = 3;
+    const CENTRE_PARIS = [48.8566, 2.3522];
+
+    function couleurSelon(nombreIncidents) {
+        if (nombreIncidents >= SEUIL_ROUGE) return '#dc2626';
+        if (nombreIncidents >= SEUIL_ORANGE) return '#f59e0b';
+        return '#16a34a';
+    }
+
+    function creerBulle(station, nombreIncidents) {
+        const bulle = document.createElement('div');
+        const nom = document.createElement('strong');
+        nom.textContent = station.nom;
+        const incidents = document.createElement('p');
+        incidents.textContent = nombreIncidents + ' incident(s) actif(s)';
+        const lien = document.createElement('a');
+        lien.href = station.url;
+        lien.textContent = 'Voir les équipements';
+        bulle.append(nom, incidents, lien);
+        return bulle;
+    }
+
+    const carte = L.map('carte').setView(CENTRE_PARIS, 12);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; contributeurs OpenStreetMap'
+    }).addTo(carte);
+
+    const marqueurs = [];
+    document.querySelectorAll('#donnees-stations li').forEach(element => {
+        const station = element.dataset;
+        const nombreIncidents = Number(station.incidents);
+        const couleur = couleurSelon(nombreIncidents);
+        const marqueur = L.circleMarker([Number(station.latitude), Number(station.longitude)], {
+            radius: 12, color: couleur, fillColor: couleur, fillOpacity: 0.8
+        }).bindPopup(creerBulle(station, nombreIncidents));
+        marqueur.addTo(carte);
+        marqueurs.push(marqueur);
+    });
+
+    if (marqueurs.length > 0) {
+        carte.fitBounds(L.featureGroup(marqueurs).getBounds().pad(0.2));
+    }
+</script>
+
+</body>
+</html>
