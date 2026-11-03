@@ -16,20 +16,18 @@
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <h1 class="text-2xl font-bold" th:text="|Incident sur ${incident.equipement.reference}|"></h1>
 
-            <span th:switch="${incident.etat.name()}">
-                <span th:case="'VERT'" class="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-                    <span class="h-2 w-2 rounded-full bg-green-600"></span>Non affecté, moins de 48 h
-                </span>
-                <span th:case="'ORANGE'" class="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-800"><span class="h-2 w-2 rounded-full bg-orange-500"></span>Non affecté, 48 h à 72 h
-                </span>
-                <span th:case="'ROUGE'" class="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-800">
-                    <span class="h-2 w-2 rounded-full bg-red-600"></span>Non affecté, 72 h et plus
+            <span th:switch="${incident.statutIncident.name()}">
+                <span th:case="'NON_AFFECTE'" class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                    <span class="h-2 w-2 rounded-full bg-amber-500"></span>Non affecté
                 </span>
                 <span th:case="'AFFECTE'" class="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-800">
                     <span class="h-2 w-2 rounded-sm bg-violet-600"></span>Affecté
                 </span>
+                <span th:case="'RESOLU'" class="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+                    <span class="h-2 w-2 rounded-sm bg-green-600"></span>Résolu
+                </span>
                 <span th:case="*" class="inline-flex items-center gap-1.5 rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
-                    <span class="h-2 w-2 rounded-sm bg-slate-500"></span>Résolu
+                    <span class="h-2 w-2 rounded-sm bg-slate-500"></span>Inconnu
                 </span>
             </span>
         </div>
@@ -52,17 +50,19 @@
             </div>
             <div th:if="${incident.statutIncident.name() == 'RESOLU'}">
                 <dt class="text-slate-500">Résolu le</dt>
-                <dd class="font-medium mt-0.5" th:text="${#temporals.format(incident.dateResolution, 'dd/MM/yyyy à HH:mm')}">02/11/2026 à 10:00</dd>
+                <dd class="font-medium mt-0.5" th:text="${incident.dateResolution != null} ? ${#temporals.format(incident.dateResolution, 'dd/MM/yyyy à HH:mm')} : 'N/A'">02/11/2026 à 10:00</dd>
             </div>
         </dl>
 
+        <!-- Description -->
         <div th:if="${incident.description != null and !#strings.isEmpty(incident.description)}">
             <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Description du problème</h2>
             <p class="mt-2 whitespace-pre-line text-sm leading-relaxed bg-white border border-slate-100 p-4 rounded-lg shadow-2xs" th:text="${incident.description}">Description.</p>
         </div>
 
+        <!-- Section Évaluation (si résolu et prestataire présent) -->
         <div th:if="${incident.statutIncident.name() == 'RESOLU' and incident.prestataire != null}"
-             class="rounded-lg border border-slate-200 p-4 text-sm">
+             class="rounded-lg border border-slate-200 p-4 text-sm bg-white">
 
             <div th:if="${evaluation != null}">
                 <p class="text-lg font-bold" th:text="|Note : ${evaluation.note} / 5|">Note : 4 / 5</p>
@@ -85,9 +85,14 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
-            <a th:href="${incident.resolu} ? @{/incidents/historique} : @{/incidents}" class="text-sm text-slate-600 hover:underline">← Retour à la liste</a>
+            <a th:href="${incident.statutIncident.name() == 'RESOLU'} ? @{/incidents/historique} : @{/incidents}" class="text-sm text-slate-600 hover:underline">← Retour à la liste</a>
+            <a th:unless="${incident.statutIncident.name() == 'RESOLU'}"
+               th:href="@{/incidents/{id}/modifier(id=${incident.id})}"
+               class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                Modifier
+            </a>
 
-            <div th:unless="${incident.resolu}" class="flex flex-wrap gap-2">
+            <div th:unless="${incident.statutIncident.name() == 'RESOLU'}" class="flex flex-wrap gap-2">
                 <a th:href="@{/incidents/{id}/affecter(id=${incident.id})}"
                    class="rounded-lg border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-medium text-violet-800 hover:bg-violet-100"
                    th:text="${incident.prestataire != null} ? 'Réaffecter' : 'Affecter à un prestataire'">Affecter à un prestataire</a>
