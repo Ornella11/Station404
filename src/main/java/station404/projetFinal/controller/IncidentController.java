@@ -7,8 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import station404.projetFinal.model.Equipement;
+import station404.projetFinal.model.Evaluation;
 import station404.projetFinal.model.Incident;
 import station404.projetFinal.service.EquipementService;
+import station404.projetFinal.service.EvaluationService;
 import station404.projetFinal.service.IncidentService;
 
 import java.util.List;
@@ -18,11 +20,14 @@ import java.util.List;
 public class IncidentController {
     private final IncidentService incidentService;
     private final EquipementService equipementService;
+    private final EvaluationService evaluationService;
 
 
-    public IncidentController(IncidentService incidentService, EquipementService equipementService) {
+
+    public IncidentController(IncidentService incidentService, EquipementService equipementService, EvaluationService evaluationService) {
         this.incidentService = incidentService;
         this.equipementService = equipementService;
+        this.evaluationService = evaluationService;
     }
 
     @GetMapping
@@ -32,10 +37,18 @@ public class IncidentController {
         return "incident/liste";
     }
 
+    @GetMapping("/historique")
+    public String getOldIncidents(Model model) {
+        List<Incident> liste = incidentService.findByStatutIncidentOrderByDateResolutionDesc();
+        model.addAttribute("incidents", liste);
+        return "incident/historique";
+    }
+
     @GetMapping("/{id}")
     public String getIncidentById(@PathVariable("id") int id, Model model) {
         Incident incident = incidentService.getIncidentById(id)
                 .orElseThrow(() -> new IllegalArgumentException("L'incident dont l'id est " + id + " n'existe pas"));
+        model.addAttribute("evaluation", evaluationService.getEvaluationByIncident(id));
         model.addAttribute("incident", incident);
         return "incident/detail";
     }
@@ -53,5 +66,12 @@ public class IncidentController {
     public String declarerIncident(@ModelAttribute Incident incident) {
         incidentService.addIncident(incident);
         return "redirect:/incidents";
+    }
+
+
+    @PostMapping("/{id}/evaluer")
+    public String evaluer(@PathVariable Integer id, @RequestParam int note, @RequestParam(required = false) String commentaire) {
+        evaluationService.evaluer(id, note, commentaire);
+        return "redirect:/incidents/" + id;
     }
 }

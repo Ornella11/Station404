@@ -12,7 +12,7 @@ public class Evaluation {
     @Column(name = "id_evaluation", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_incident", nullable = false, unique = true)
     private Incident incident;
 
@@ -49,5 +49,9 @@ public class Evaluation {
 
     public LocalDate getDateEvaluation() {
         return dateEvaluation;
+    }
+
+    public Incident getIncident() {
+        return incident;
     }
 }

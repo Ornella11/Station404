@@ -2,6 +2,7 @@ package station404.projetFinal.service;
 
 import org.springframework.stereotype.Service;
 import station404.projetFinal.model.Incident;
+import station404.projetFinal.model.StatutIncident;
 import station404.projetFinal.repository.IncidentRepository;
 
 import java.util.List;
@@ -26,5 +27,7 @@ public class IncidentService {
         return incidentRepository.save(incident);
     }
 
-
+    public List<Incident> findByStatutIncidentOrderByDateResolutionDesc() {
+        return incidentRepository.findByStatutIncidentOrderByDateResolutionDesc(StatutIncident.RESOLU);
+    }
 }
