@@ -5,4 +5,6 @@ import station404.projetFinal.model.Evaluation;
 
 public interface EvaluationRepository extends JpaRepository<Evaluation, Integer> {
     boolean  existsByIncidentId(Integer incidentId);
+
+    Evaluation findByIncidentId(Integer incidentId);
 }
