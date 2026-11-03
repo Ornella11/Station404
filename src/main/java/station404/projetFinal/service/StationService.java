@@ -2,6 +2,7 @@ package station404.projetFinal.service;
 
 import org.springframework.stereotype.Service;
 import station404.projetFinal.exception.StationIntrouvableException;
+import station404.projetFinal.model.EtatStation;
 import station404.projetFinal.model.Station;
 import station404.projetFinal.repository.StationRepository;
 
@@ -21,5 +22,9 @@ public class StationService {
     public Station chercherStation(Integer id){
         return stationRepository.findById(id)
         .orElseThrow(() -> new StationIntrouvableException(id));
+    }
+
+    public List<EtatStation> calculerEtatsStations(){
+        return stationRepository.calculerEtatStation();
     }
 }
