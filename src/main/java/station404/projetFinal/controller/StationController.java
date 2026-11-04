@@ -1,12 +1,12 @@
 package station404.projetFinal.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import station404.projetFinal.service.EquipementService;
 import station404.projetFinal.service.StationService;
-
 
 @Controller
 public class StationController {
@@ -18,18 +18,18 @@ public class StationController {
         this.equipementService = equipementService;
     }
 
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     @GetMapping("/stations")
     public String afficherStations(Model model){
         model.addAttribute("stations", stationService.listerStations());
         return "stations";
     }
 
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     @GetMapping("/stations/{id}")
     public String afficherStation(@PathVariable Integer id, Model model){
         model.addAttribute("station",  stationService.chercherStation(id));
         model.addAttribute("equipements", equipementService.listerEquipements(id));
         return "station";
     }
-
 }
-

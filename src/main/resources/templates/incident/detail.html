@@ -96,10 +96,11 @@
                 <a th:href="@{/incidents/{id}/affecter(id=${incident.id})}"
                    class="rounded-lg border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-medium text-violet-800 hover:bg-violet-100"
                    th:text="${incident.prestataire != null} ? 'Réaffecter' : 'Affecter à un prestataire'">Affecter à un prestataire</a>
-                <a th:href="@{/incidents/{id}/resoudre(id=${incident.id})}"
-                   class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
-                    Déclarer comme résolu
-                </a>
+                <form th:action="@{/incidents/{id}/resoudre(id=${incident.id})}" method="post" class="inline">
+                    <button type="submit" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors">
+                        Marquer comme résolu
+                    </button>
+                </form>
             </div>
         </div>
 
