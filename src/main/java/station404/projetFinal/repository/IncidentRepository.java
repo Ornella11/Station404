@@ -23,4 +23,29 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
     List<Incident> findByStatutIncidentOrderByDateResolutionDesc(StatutIncident statutIncident);
 
     List<Incident> findByStatutIncidentNot(StatutIncident statutIncident);
+
+    @Query("""
+    SELECT YEAR(i.dateOuverture), MONTH(i.dateOuverture), COUNT(i)
+    FROM Incident i
+    GROUP BY YEAR(i.dateOuverture), MONTH(i.dateOuverture)
+    ORDER BY YEAR(i.dateOuverture), MONTH(i.dateOuverture)
+    """)
+    List<Object[]> compterParMois();
+
+    @Query("""
+    SELECT s.nom, COUNT(i)
+    FROM Incident i JOIN i.equipement e JOIN e.station s
+    GROUP BY s.nom
+    ORDER BY COUNT(i) DESC
+    """)
+    List<Object[]> compterParStation();
+
+    @Query("""
+    SELECT i.dateOuverture, i.dateResolution
+    FROM Incident i
+    WHERE i.statutIncident = station404.projetFinal.model.StatutIncident.RESOLU
+    ORDER BY i.dateResolution
+    """)
+    List<Object[]> trouverDatesIncidentsResolus();
 }
+

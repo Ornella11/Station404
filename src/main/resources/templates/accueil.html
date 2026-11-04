@@ -3,17 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Accueil</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Dashboard Exploitation - Station404</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-100">
+<body class="min-h-screen bg-slate-100 text-slate-800">
 
 <header th:replace="~{banniere :: banniere}"></header>
 
-<main class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-slate-800">Accueil</h1>
+<main class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold">Tableau de bord</h1>
+            <p class="text-sm text-slate-500">Suivi en temps réel des incidents actifs et de leur criticité temporelle.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" id="btnTri"
+                    class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                📅 Trier par date
+            </button>
+            <a th:href="@{/incidents/nouveau}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                + Déclarer un incident
+            </a>
+        </div>
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse" id="tableIncidents">
+            <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th class="py-3 px-4">Urgence</th>
+                <th class="py-3 px-4">Station / Équipement</th>
+                <th class="py-3 px-4">Description</th>
+                <th class="py-3 px-4">Ouvert le</th>
+                <th class="py-3 px-4">Prestataire</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+            <tr th:if="${#lists.isEmpty(incidents)}">
+                <td colspan="6" class="py-6 text-center text-slate-400">Aucun incident actif pour le moment.</td>
+            </tr>
+            <tr th:each="item : ${incidents}" class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 whitespace-nowrap">
+                    <span th:if="${item.value == 'VERT'}" class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">48h</span>
+                    <span th:if="${item.value == 'ORANGE'}" class="rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-800">48h-72h</span>
+                    <span th:if="${item.value == 'ROUGE'}" class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">72h</span>
+                </td>
+
+                <td class="py-3 px-4 font-medium text-slate-900" th:text="${item.key.equipement.reference}">REF</td>
+                <td class="py-3 px-4 text-slate-600 max-w-xs truncate" th:text="${item.key.description}">Description</td>
+                <!-- "Ouvert le" avant "Prestataire", comme dans l'en-tête -->
+                <td class="py-3 px-4 text-slate-500 whitespace-nowrap" th:text="${#temporals.format(item.key.dateOuverture, 'dd/MM/yyyy HH:mm')}">Date</td>
+                <td class="py-3 px-4 text-slate-600" th:text="${item.key.prestataire != null} ? ${item.key.prestataire.nom} : 'Aucun'">Prestataire</td>
+                <td class="py-3 px-4 text-right whitespace-nowrap">
+                    <a th:href="@{/incidents/{id}(id=${item.key.id})}" class="font-medium text-blue-600 hover:underline">Détails</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var bouton = document.getElementById("btnTri");
+        var tbody = document.querySelector("#tableIncidents tbody");
+        if (!bouton || !tbody) { return; }
 
+        // Repère la colonne "Ouvert le" grâce à l'en-tête, pas à sa position
+        var entetes = Array.prototype.slice.call(document.querySelectorAll("#tableIncidents thead th"));
+        var colDate = entetes.findIndex(function (th) {
+            return th.textContent.trim().toLowerCase() === "ouvert le";
+        });
+        if (colDate < 0) { colDate = 3; }
+
+        // Le serveur envoie les incidents du plus ancien au plus récent :
+        // le premier clic affiche donc les plus récents en haut.
+        var plusRecentsDabord = true;
+
+        // Lit "dd/MM/yyyy HH:mm" et le convertit en nombre
+        function lireDate(ligne) {
+            var cellule = ligne.cells[colDate];
+            if (!cellule) { return NaN; }
+            var m = cellule.textContent.trim().match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+            if (!m) { return NaN; }
+            return new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]).getTime();
+        }
+
+        bouton.addEventListener("click", function () {
+            // Seules les lignes avec une date valide sont triées (ignore la ligne "Aucun incident")
+            var lignes = Array.prototype.slice.call(tbody.rows).filter(function (l) {
+                return !isNaN(lireDate(l));
+            });
+            if (lignes.length < 2) { return; }
+
+            lignes.sort(function (a, b) {
+                return plusRecentsDabord ? lireDate(b) - lireDate(a) : lireDate(a) - lireDate(b);
+            });
+            lignes.forEach(function (l) { tbody.appendChild(l); });
+
+            bouton.textContent = plusRecentsDabord
+                ? "Du plus récents au plus ancien ▾"
+                : "Du plus anciens au plus récent ▴";
+            plusRecentsDabord = !plusRecentsDabord;
+        });
+    });
+</script>
 </body>
 </html>

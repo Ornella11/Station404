@@ -13,8 +13,10 @@
 
             <nav th:if="${utilisateurConnecte != null}" aria-label="Navigation principale">
                 <ul class="flex items-center gap-6 text-sm font-medium text-slate-600">
+                    <li><a th:href="@{/}" class="hover:text-blue-600">Tableau de bord</a></li>
                     <li><a th:href="@{/stations}" class="hover:text-blue-600">Stations</a></li>
                     <li><a th:href="@{/cartographie}" class="hover:text-blue-600">Cartographie</a></li>
+                    <li><a th:href="@{/statistiques}" class="hover:text-blue-600">Statistiques</a></li>
                     <li><a th:href="@{/incidents}" class="hover:text-blue-600">Gestion des incidents</a></li>
                     <li><a th:href="@{/incidents/historique}" class="hover:text-blue-600">Historique des incidents</a></li>
                 </ul>
