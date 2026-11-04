@@ -22,7 +22,7 @@ public class Config {
     SecurityFilterChain chaineFiltresSecurite(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(autorisations -> autorisations
-                        .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(connexion -> connexion
                         .loginPage("/login")
