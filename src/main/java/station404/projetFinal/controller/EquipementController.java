@@ -19,4 +19,6 @@ public class EquipementController {
         model.addAttribute("equipement", equipementService.chercherEquipement(id));
         return "equipement";
     }
+
+
 }
