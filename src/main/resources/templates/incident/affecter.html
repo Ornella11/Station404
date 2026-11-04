@@ -13,7 +13,7 @@
 <main class="max-w-xl mx-auto px-4 py-8">
     <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 class="text-xl font-bold mb-1">Affecter un prestataire</h1>
-        <p class="text-sm text-slate-500 mb-6" th:text="|Incident sur l'équipement : ${incident.equipement.reference}|"></p>
+        <p class="text-sm text-slate-500 mb-6" th:text="|Incident équipement : ${incident.equipement.reference}|">Incident sur l'équipement</p>
 
         <form th:action="@{/incidents/{id}/affecter(id=${incident.id})}" method="post" class="space-y-4">
             <div>

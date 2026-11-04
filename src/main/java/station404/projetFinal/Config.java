@@ -7,8 +7,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.time.Clock;
+
 @Configuration
-public class ConfigSecurite {
+public class Config {
     // le mot de passe est transmis sous forme hachée
     @Bean
     PasswordEncoder encodeurMotDePasse() {
@@ -29,5 +31,11 @@ public class ConfigSecurite {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll());
         return http.build();
+    }
+
+    // pour l'heure courante (pour la date d'ouverture d'un incident)
+    @Bean
+    Clock clock() {
+        return Clock.systemDefaultZone();
     }
 }
