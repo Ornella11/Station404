@@ -86,5 +86,14 @@ public class IncidentService {
         incidentRepository.save(incidentExistant);
     }
 
+    public List<Incident> listerIncidentsAvecDetails() {
+        return incidentRepository.trouverTousAvecDetails();
+    }
+
+    public Incident chercherIncidentAvecDetails(Integer id) {
+        return incidentRepository.trouverAvecDetails(id)
+                .orElseThrow(() -> new IncidentIntrouvableException(id));
+    }
+
 
 }

@@ -2,10 +2,12 @@ package station404.projetFinal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import station404.projetFinal.model.Incident;
 import station404.projetFinal.model.StatutIncident;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
     List<Incident> findByEquipementIdOrderByDateOuvertureAsc(Integer equipementId);
@@ -47,5 +49,23 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
     ORDER BY i.dateResolution
     """)
     List<Object[]> trouverDatesIncidentsResolus();
+
+    @Query("""
+    SELECT i FROM Incident i
+    JOIN FETCH i.equipement e
+    JOIN FETCH e.station
+    LEFT JOIN FETCH i.prestataire
+    ORDER BY i.dateOuverture DESC
+    """)
+    List<Incident> trouverTousAvecDetails();
+
+    @Query("""
+    SELECT i FROM Incident i
+    JOIN FETCH i.equipement e
+    JOIN FETCH e.station
+    LEFT JOIN FETCH i.prestataire
+    WHERE i.id = :id
+    """)
+    Optional<Incident> trouverAvecDetails(@Param("id") Integer id);
 }
 
