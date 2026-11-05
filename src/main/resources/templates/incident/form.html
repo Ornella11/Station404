@@ -20,13 +20,26 @@
     <form th:action="@{/incidents}" th:object="${incident}" method="post"
           class="mt-6 space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
 
-        <div>
-            <label for="equipement" class="block text-sm font-medium">Équipement *</label>
-            <select id="equipement" th:field="*{equipement}"
-                    class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                <option value="">Choisir un équipement</option>
-                <option th:each="equipement : ${equipements}" th:value="${equipement.id}" th:text="${equipement.reference}"></option>
-            </select>
+        <!-- Zone de recherche d'équipement interactive -->
+        <div class="relative">
+            <label for="searchEquipement" class="block text-sm font-medium">Équipement *</label>
+
+            <input type="hidden" id="equipementId" th:field="*{equipement}" required />
+
+            <input type="text" id="searchEquipement" placeholder="Rechercher un équipement..."
+                   autocomplete="off"
+                   class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+
+            <ul id="suggestionsList" class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg hidden">
+                <li th:each="equipement : ${equipements}"
+                    th:data-id="${equipement.id}"
+                    th:data-ref="${equipement.reference}"
+                    class="cursor-pointer px-3 py-2 text-sm hover:bg-blue-50 transition-colors"
+                    th:text="${equipement.reference} + ': ' + ${equipement.libelle}">
+                    Equipement
+                </li>
+            </ul>
+            <div id="noResult" class="hidden mt-1 text-xs text-red-500">Aucun équipement trouvé.</div>
         </div>
 
         <div>
@@ -45,6 +58,65 @@
         </div>
     </form>
 </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("searchEquipement");
+        const hiddenInput = document.getElementById("equipementId");
+        const suggestionsList = document.getElementById("suggestionsList");
+        const items = suggestionsList.querySelectorAll("li");
+        const noResult = document.getElementById("noResult");
+
+        searchInput.addEventListener("focus", function() {
+            suggestionsList.classList.remove("hidden");
+        });
+
+        searchInput.addEventListener("input", function() {
+            const filter = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            suggestionsList.classList.remove("hidden");
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = "";
+                    visibleCount++;
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResult.classList.remove("hidden");
+            } else {
+                noResult.classList.add("hidden");
+            }
+
+            if (filter === "") {
+                hiddenInput.value = "";
+            }
+        });
+
+        items.forEach(item => {
+            item.addEventListener("click", function() {
+                const id = this.getAttribute("data-id");
+                const ref = this.getAttribute("data-ref");
+
+                searchInput.value = ref;
+                hiddenInput.value = id;
+                suggestionsList.classList.add("hidden");
+                noResult.classList.add("hidden");
+            });
+        });
+
+        document.addEventListener("click", function(e) {
+            if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+                suggestionsList.classList.add("hidden");
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
