@@ -21,6 +21,7 @@ public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final PrestataireRepository prestataireRepository;
     private final Clock clock;
+
     public IncidentService(IncidentRepository incidentRepository, PrestataireRepository prestataireRepository, Clock clock) {
         this.incidentRepository = incidentRepository;
         this.prestataireRepository = prestataireRepository;

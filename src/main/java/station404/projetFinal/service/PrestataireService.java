@@ -19,11 +19,4 @@ public class PrestataireService {
         return prestataireRepository.findAll();
     }
 
-    public Optional<Prestataire> getPrestataireById(Integer id) {
-        return prestataireRepository.findById(id);
-    }
-
-    public Prestataire save(Prestataire prestataire) {
-        return prestataireRepository.save(prestataire);
-    }
 }

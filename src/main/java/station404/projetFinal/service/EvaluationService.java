@@ -25,10 +25,6 @@ public class EvaluationService {
         this.clock = clock;
     }
 
-    public List<Evaluation> getEvaluations() {
-        return evaluationRepository.findAll();
-    }
-
     public Evaluation getEvaluationByIncident(Integer incidentId) {
         return evaluationRepository.findByIncidentId(incidentId);
     }
