@@ -23,8 +23,9 @@ public class Config {
     // chaîne de filtre pour les requêtes HTTP
     @Bean
     SecurityFilterChain chaineFiltresSecurite(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(autorisations -> autorisations
-                        .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
+        http
+                .authorizeHttpRequests(autorisations -> autorisations
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(connexion -> connexion
                         .loginPage("/login")

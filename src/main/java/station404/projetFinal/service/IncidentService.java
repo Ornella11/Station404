@@ -2,6 +2,8 @@ package station404.projetFinal.service;
 
 import org.springframework.stereotype.Service;
 import station404.projetFinal.exception.IncidentException;
+import station404.projetFinal.exception.IncidentIntrouvableException;
+import station404.projetFinal.exception.PrestataireIntrouvableException;
 import station404.projetFinal.model.Incident;
 import station404.projetFinal.model.Prestataire;
 import station404.projetFinal.model.StatutIncident;
@@ -50,13 +52,13 @@ public class IncidentService {
 
     public void affecterPrestataire(Integer incidentId, Integer prestataireId) {
         Incident incident = incidentRepository.findById(incidentId)
-                .orElseThrow(() -> new IllegalArgumentException("Incident invalide : " + incidentId));
+                .orElseThrow(() -> new IncidentIntrouvableException(incidentId));
         if (incident.isResolu()){
             throw  new IncidentException("L'incident " + incidentId + " est déjà résolu");
         }
 
         Prestataire prestataire = prestataireRepository.findById(prestataireId)
-                .orElseThrow(() -> new IllegalArgumentException("Prestataire invalide : " + prestataireId));
+                .orElseThrow(() -> new PrestataireIntrouvableException(prestataireId));
 
         incident.setPrestataire(prestataire);
         incident.setStatutIncident(StatutIncident.AFFECTE);
@@ -66,7 +68,7 @@ public class IncidentService {
 
     public void resoudreIncident(Integer incidentId) {
         Incident incident = incidentRepository.findById(incidentId)
-                .orElseThrow(() -> new IllegalArgumentException("Incident invalide : " + incidentId));
+                .orElseThrow(() -> new IncidentIntrouvableException(incidentId));
 
         incident.setStatutIncident(StatutIncident.RESOLU);
         incident.setDateResolution(LocalDateTime.now(clock));
@@ -76,12 +78,21 @@ public class IncidentService {
 
     public void modifierIncident(Integer id, Incident incidentModifie) {
         Incident incidentExistant = incidentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Incident invalide : " + id));
+                .orElseThrow(() -> new IncidentIntrouvableException(id));
 
         incidentExistant.setEquipement(incidentModifie.getEquipement());
         incidentExistant.setDescription(incidentModifie.getDescription());
 
         incidentRepository.save(incidentExistant);
+    }
+
+    public List<Incident> listerIncidentsAvecDetails() {
+        return incidentRepository.trouverTousAvecDetails();
+    }
+
+    public Incident chercherIncidentAvecDetails(Integer id) {
+        return incidentRepository.trouverAvecDetails(id)
+                .orElseThrow(() -> new IncidentIntrouvableException(id));
     }
 
 

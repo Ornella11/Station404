@@ -3,6 +3,7 @@ package station404.projetFinal.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import station404.projetFinal.exception.IncidentException;
+import station404.projetFinal.exception.IncidentIntrouvableException;
 import station404.projetFinal.model.Evaluation;
 import station404.projetFinal.model.Incident;
 import station404.projetFinal.repository.EvaluationRepository;
@@ -35,7 +36,7 @@ public class EvaluationService {
     @Transactional
     public Evaluation evaluer(Integer incidentId, int note, String commentaire) {
         Incident incident = incidentRepository.findById(incidentId)
-                .orElseThrow(() -> new IllegalArgumentException("Incident introuvable"));
+                .orElseThrow(() -> new IncidentIntrouvableException(incidentId));
 
         if (evaluationRepository.existsByIncidentId(incidentId))
             throw new IncidentException("Cet incident a déjà été évalué.");
