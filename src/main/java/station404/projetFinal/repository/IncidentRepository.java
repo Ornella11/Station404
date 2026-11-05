@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
-    List<Incident> findByEquipementIdOrderByDateOuvertureAsc(Integer equipementId);
 
     @Query("""
  SELECT i FROM Incident i
@@ -20,7 +19,6 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
             WHERE i.statutIncident <> station404.projetFinal.model.StatutIncident.RESOLU
             ORDER BY i.dateOuverture ASC
             """)
-    List<Incident> trouverIncidentsActifs();
 
     List<Incident> findByStatutIncidentOrderByDateResolutionDesc(StatutIncident statutIncident);
 

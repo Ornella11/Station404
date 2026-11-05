@@ -5,6 +5,7 @@ import station404.projetFinal.model.Incident;
 import station404.projetFinal.model.StatutIncident;
 import station404.projetFinal.repository.IncidentRepository;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -16,12 +17,15 @@ import java.util.stream.Collectors;
 public class AccueilService {
 
     private final IncidentRepository incidentRepository;
-    public AccueilService(IncidentRepository incidentRepository) {
+    private final Clock clock;
+
+    public AccueilService(IncidentRepository incidentRepository, Clock clock) {
         this.incidentRepository = incidentRepository;
+        this.clock = clock;
     }
 
     public String calculerUrgence(Incident incident) {
-        long heures = Duration.between(incident.getDateOuverture(), LocalDateTime.now()).toHours();
+        long heures = Duration.between(incident.getDateOuverture(), LocalDateTime.now(clock)).toHours();
 
         if (heures < 48) {
             return "VERT";
